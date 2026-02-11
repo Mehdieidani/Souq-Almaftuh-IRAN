@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>السوق المفتوح + ایران</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @font-face { font-family: 'Vazir'; src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css'); }
+        body { font-family: 'Vazir', sans-serif; }
+        .page { display: none; }
+        .active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 pb-20">
+
+    <header class="p-4 bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50 flex justify-between items-center">
+        <h1 class="text-xl font-bold text-teal-600">السوق المفتوح</h1>
+        <div id="userStatus" class="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">مهمان</div>
+    </header>
+
+    <div id="home" class="page active p-4">
+        <div id="adsContainer" class="grid grid-cols-2 gap-3">
+            </div>
+    </div>
+
+    <div id="auth" class="page p-6">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-xl">
+            <h2 class="text-2xl font-bold mb-6 text-center">ورود / ثبت‌نام</h2>
+            <div class="space-y-4">
+                <input type="tel" id="userPhone" placeholder="شماره موبایل یا ایمیل" class="w-full p-4 rounded-2xl border dark:bg-gray-700 dark:border-gray-600 outline-none focus:ring-2 ring-teal-500">
+                <input type="password" id="userPass" placeholder="رمز عبور" class="w-full p-4 rounded-2xl border dark:bg-gray-700 dark:border-gray-600 outline-none focus:ring-2 ring-teal-500">
+                <button onclick="handleAuth()" class="w-full bg-teal-600 text-white py-4 rounded-2xl font-bold text-lg">تایید و ورود</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="details" class="page">
+        <div class="relative">
+            <button onclick="nav('home')" class="absolute top-4 right-4 bg-black/50 text-white w-10 h-10 rounded-full flex items-center justify-center z-10"><i class="fas fa-arrow-right"></i></button>
+            <img id="detImg" class="w-full h-80 object-cover shadow-lg">
+        </div>
+        <div class="p-6 bg-white dark:bg-gray-800 -mt-6 rounded-t-3xl relative z-20">
+            <div id="detVip" class="hidden text-xs bg-amber-500 text-white px-2 py-1 rounded w-fit mb-2">آگهی ویژه</div>
+            <h2 id="detTitle" class="text-2xl font-bold mb-2"></h2>
+            <p id="detPrice" class="text-teal-600 font-black text-xl mb-4 border-b pb-4"></p>
+            <p class="font-bold mb-2">توضیحات:</p>
+            <p id="detDesc" class="text-gray-600 dark:text-gray-400 leading-relaxed mb-6"></p>
+            
+            <div class="flex gap-3 sticky bottom-4">
+                <button onclick="nav('chat')" class="flex-grow bg-teal-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-teal-500/30"><i class="fas fa-comment-dots ml-2"></i> شروع چت</button>
+                <a id="detCall" class="flex-grow bg-gray-800 dark:bg-gray-700 text-white py-4 rounded-2xl font-bold text-center"><i class="fas fa-phone ml-2"></i> تماس</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="addAd" class="page p-6">
+        <h2 class="text-xl font-bold mb-4 text-teal-600">ثبت آگهی جدید</h2>
+        <div class="space-y-4">
+            <input type="text" id="addTitle" placeholder="عنوان آگهی" class="w-full p-4 rounded-2xl border dark:bg-gray-700 dark:border-gray-600">
+            <input type="text" id="addPrice" placeholder="قیمت (تومان / تتر)" class="w-full p-4 rounded-2xl border dark:bg-gray-700 dark:border-gray-600">
+            <textarea id="addDesc" placeholder="توضیحات کامل محصول یا خدمات..." class="w-full p-4 rounded-2xl border dark:bg-gray-700 dark:border-gray-600 h-40"></textarea>
+            <button onclick="createNewAd()" class="w-full bg-red-600 text-white py-4 rounded-2xl font-bold">ارسال برای تایید مدیریت</button>
+        </div>
+    </div>
+
+    <nav class="fixed bottom-0 w-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t flex justify-around p-3">
+        <button onclick="nav('home')" class="flex flex-col items-center text-teal-600"><i class="fas fa-store"></i><span class="text-[10px]">بازار</span></button>
+        <button onclick="checkAccess('addAd')" class="flex flex-col items-center text-gray-400"><i class="fas fa-plus-square"></i><span class="text-[10px]">ثبت آگهی</span></button>
+        <button onclick="checkAccess('auth')" class="flex flex-col items-center text-gray-400"><i class="fas fa-user"></i><span class="text-[10px]">پنل کاربر</span></button>
+    </nav>
+
+    <script>
+        // دیتابیس فرضی آگهی‌ها
+        const adsData = [
+            { id: 1, title: 'آپارتمان صادراتی در مسقط', price: '۱۲,۰۰۰ تتر', img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500', desc: 'واحد ۱۲۰ متری با ویو دریا، مناسب برای سرمایه‌گذاران ایرانی در عمان.', vip: true },
+            { id: 2, title: 'پسته رفسنجان درجه یک', price: '۸۵۰,۰۰۰ تومان', img: 'https://images.unsplash.com/photo-1536620353114-1e089209f874?w=500', desc: 'آماده بارگیری برای عراق و کویت. تضمین کیفیت و سلامت بار.', vip: false }
+        ];
+
+        let currentUser = JSON.parse(localStorage.getItem('user')) || null;
+
+        // تابع ناوبری
+        function nav(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(id === 'home') renderAds();
+        }
+
+        // نمایش لیست آگهی‌ها
+        function renderAds() {
+            const container = document.getElementById('adsContainer');
+            container.innerHTML = adsData.map(ad => `
+                <div onclick="showDetails(${ad.id})" class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700">
+                    <img src="${ad.img}" class="w-full h-32 object-cover">
+                    <div class="p-3">
+                        <h3 class="text-[11px] font-bold truncate">${ad.title}</h3>
+                        <p class="text-teal-600 text-[12px] font-black mt-1">${ad.price}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // نمایش جزئیات کامل آگهی
+        function showDetails(id) {
+            const ad = adsData.find(a => a.id === id);
+            document.getElementById('detTitle').innerText = ad.title;
+            document.getElementById('detPrice').innerText = ad.price;
+            document.getElementById('detDesc').innerText = ad.desc;
+            document.getElementById('detImg').src = ad.img;
+            document.getElementById('detCall').href = "tel:09120000000";
+            ad.vip ? document.getElementById('detVip').classList.remove('hidden') : document.getElementById('detVip').classList.add('hidden');
+            nav('details');
+        }
+
+        // سیستم ثبت‌نام و ورود
+        function handleAuth() {
+            const phone = document.getElementById('userPhone').value;
+            const pass = document.getElementById('userPass').value;
+            if(phone && pass.length > 4) {
+                currentUser = { phone: phone };
+                localStorage.setItem('user', JSON.stringify(currentUser));
+                document.getElementById('userStatus').innerText = "تایید شده";
+                alert("ورود با موفقیت انجام شد.");
+                nav('home');
+            } else {
+                alert("اطلاعات را به درستی وارد کنید (رمز حداقل ۵ کاراکتر).");
+            }
+        }
+
+        // چک کردن دسترسی
+        function checkAccess(targetId) {
+            if(!currentUser) {
+                alert("لطفاً ابتدا ثبت‌نام کنید یا وارد حساب خود شوید.");
+                nav('auth');
+            } else {
+                nav(targetId);
+            }
+        }
+
+        function createNewAd() {
+            alert("آگهی ثبت شد و پس از بررسی مدیریت منتشر می‌شود.");
+            nav('home');
+        }
+
+        // اجرای اولیه
+        renderAds();
+        if(currentUser) document.getElementById('userStatus').innerText = "تایید شده";
+    </script>
+</body>
+</html>
