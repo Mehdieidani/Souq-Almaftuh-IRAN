@@ -1,0 +1,60 @@
+project-root/
+├── app/
+│   ├── Models/
+│   │   ├── User.php
+│   │   ├── Ad.php
+│   │   ├── Category.php
+│   │   ├── City.php
+│   │   ├── Country.php
+│   │   ├── AdImage.php
+│   │   ├── ChatRoom.php
+│   │   ├── Message.php
+│   │   ├── Transaction.php
+│   │   └── Ticket.php
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Api/
+│   │   │   │   ├── AuthController.php
+│   │   │   │   ├── AdController.php
+│   │   │   │   ├── ChatController.php
+│   │   │   │   ├── PaymentController.php
+│   │   │   │   └── Admin/
+│   │   │   │       ├── UserController.php
+│   │   │   │       └── AdController.php
+│   │   ├── Middleware/
+│   │   │   ├── AdminMiddleware.php
+│   │   │   └── SetLocale.php
+│   │   └── Requests/
+│   │       ├── AdRequest.php
+│   │       └── MessageRequest.php
+│   └── Console/
+│       └── Kernel.php (برای دستورات cron: اکسپایر آگهی‌ها)
+├── database/
+│   ├── migrations/
+│   │   ├── 2025_01_01_000001_create_users_table.php
+│   │   ├── 2025_01_01_000002_create_countries_table.php
+│   │   ├── 2025_01_01_000003_create_cities_table.php
+│   │   ├── 2025_01_01_000004_create_categories_table.php
+│   │   ├── 2025_01_01_000005_create_ads_table.php
+│   │   ├── 2025_01_01_000006_create_ad_images_table.php
+│   │   ├── 2025_01_01_000007_create_chat_rooms_table.php
+│   │   ├── 2025_01_01_000008_create_messages_table.php
+│   │   ├── 2025_01_01_000009_create_transactions_table.php
+│   │   └── 2025_01_01_000010_create_tickets_table.php
+│   └── seeders/
+│       ├── DatabaseSeeder.php
+│       ├── CountrySeeder.php
+│       ├── CitySeeder.php
+│       └── CategorySeeder.php
+├── routes/
+│   ├── api.php
+│   └── web.php (برای فیلامنت)
+├── config/
+│   ├── app.php (افزودن locale fa/ar)
+│   └── filament.php (در صورت نصب)
+├── resources/
+│   ├── lang/
+│   │   ├── fa/ (فایل‌های ترجمه)
+│   │   └── ar/
+│   └── views/ (در صورت نیاز به فرانت – در این پروژه تمرکز بر API است)
+└── .env (تنظیمات دیتابیس، پوسر و ...)
